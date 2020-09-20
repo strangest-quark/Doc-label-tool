@@ -225,7 +225,7 @@ export default {
 
       promise.then(
         function (data) {
-          alert("Successfully uploaded data.");
+          alert("Successfully uploaded data to " + data.Location);
         },
         function (err) {
           console.log(err.message);
