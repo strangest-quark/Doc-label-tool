@@ -1,4 +1,6 @@
-# label-tool
+# Doc label tool
+
+[![Netlify Status](https://api.netlify.com/api/v1/badges/ae2861bd-052e-48ae-a900-667dabd2ec31/deploy-status)](https://app.netlify.com/sites/line-item-label-tool/deploys)
 
 ## Project setup
 ```
