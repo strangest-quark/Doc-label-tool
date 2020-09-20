@@ -29,6 +29,9 @@
         <b v-on:click="saveData()" style="color:blue; padding:5px">
           <u>Export data</u>
         </b>
+        <b v-on:click="upload()" style="color:blue; padding:5px">
+          <u>Save data to S3</u>
+        </b>
       </div>
       <embed
         style="padding-top:25px"
@@ -68,6 +71,8 @@
     </div>
   </div>
 </template>
+
+<script src="https://sdk.amazonaws.com/js/aws-sdk-2.756.0.min.js"></script>
 
 <script>
 import Box from "./components/Box";
@@ -187,6 +192,46 @@ export default {
         null
       );
       a.dispatchEvent(e);
+    },
+    upload() {
+      var albumBucketName = "doc-upload-test-987";
+      var bucketRegion = "ap-south-1";
+      var IdentityPoolId = "ap-south-1:5f660682-a77c-4d77-9456-7e4535bcb50c";
+
+      AWS.config.update({
+        region: bucketRegion,
+        credentials: new AWS.CognitoIdentityCredentials({
+          IdentityPoolId: IdentityPoolId,
+        }),
+      });
+
+      var s3 = new AWS.S3({
+        apiVersion: "2006-03-01",
+        params: { Bucket: albumBucketName },
+      });
+      var file = new Blob([JSON.stringify(this.tables)], { type: "application/json" });
+      var fileName = this.imageInput + ".json";
+      // Use S3 ManagedUpload class as it supports multipart uploads
+      var upload = new AWS.S3.ManagedUpload({
+        params: {
+          Bucket: "doc-upload-test-987",
+          Key: fileName,
+          Body: file,
+          ACL: "public-read",
+        },
+      });
+
+      var promise = upload.promise();
+
+      promise.then(
+        function (data) {
+          alert("Successfully uploaded data.");
+        },
+        function (err) {
+          console.log(err.message);
+          return alert("There was an error uploading your data: ");
+        }
+      );
     },
   },
 };
