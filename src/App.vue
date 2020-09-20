@@ -23,18 +23,16 @@
         <button type="submit" v-on:click="load()">Load</button>
         <br />
         <br />
-        <b v-on:click="saveTable()" style="color:blue">
+        <b v-on:click="saveTable()" style="color:blue; padding:5px">
           <u>Save Table</u>
         </b>
-        <download-csv style="color:blue; padding-top:5px" :data="tables">
-          <b>
-            <u>Export data</u>
-          </b>
-        </download-csv>
+        <b v-on:click="saveData()" style="color:blue; padding:5px">
+          <u>Export data</u>
+        </b>
       </div>
       <embed
         style="padding-top:25px"
-        :src=pdfName
+        :src="pdfName"
         width="80%"
         height="400px"
         type="application/pdf"
@@ -97,9 +95,11 @@ export default {
       },
       boxes: [],
       tables: [],
-      imageInput: 'paypal_0',
-      imageName: 'https://doc-upload-test-987.s3.ap-south-1.amazonaws.com/paypal_0.png',
-      pdfName: 'https://doc-upload-test-987.s3.ap-south-1.amazonaws.com/paypal.pdf',
+      imageInput: "paypal_0",
+      imageName:
+        "https://doc-upload-test-987.s3.ap-south-1.amazonaws.com/paypal_0.png",
+      pdfName:
+        "https://doc-upload-test-987.s3.ap-south-1.amazonaws.com/paypal.pdf",
       activeBoxIndex: null,
     };
   },
@@ -151,10 +151,43 @@ export default {
       this.tables.push(this.boxes);
       this.boxes = [];
     },
-    load(){
-        this.pdfName = 'https://doc-upload-test-987.s3.ap-south-1.amazonaws.com/' + this.imageInput.substring(0, this.imageInput.length - 2) + '.pdf';
-        this.imageName = 'https://doc-upload-test-987.s3.ap-south-1.amazonaws.com/' + this.imageInput + '.png';
-    }
+    load() {
+      this.pdfName =
+        "https://doc-upload-test-987.s3.ap-south-1.amazonaws.com/" +
+        this.imageInput.substring(0, this.imageInput.length - 2) +
+        ".pdf";
+      this.imageName =
+        "https://doc-upload-test-987.s3.ap-south-1.amazonaws.com/" +
+        this.imageInput +
+        ".png";
+    },
+    saveData() {
+      const data = JSON.stringify(this.tables);
+      const blob = new Blob([data], { type: "text/plain" });
+      const e = document.createEvent("MouseEvents"),
+        a = document.createElement("a");
+      a.download = "test.json";
+      a.href = window.URL.createObjectURL(blob);
+      a.dataset.downloadurl = ["text/json", a.download, a.href].join(":");
+      e.initEvent(
+        "click",
+        true,
+        false,
+        window,
+        0,
+        0,
+        0,
+        0,
+        0,
+        false,
+        false,
+        false,
+        false,
+        0,
+        null
+      );
+      a.dispatchEvent(e);
+    },
   },
 };
 </script>
