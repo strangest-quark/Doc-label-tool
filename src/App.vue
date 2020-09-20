@@ -15,17 +15,26 @@
       </div>
       <h4>Output</h4>
       <div>
-      <pre
-        style="padding-right:100px; height: 250px; overflow-y: scroll; scroll-snap-type: y proximity; "
-      >{{ JSON.stringify(boxes, null, '\t') }}</pre>
-      <download-csv style="color:blue; padding-top:20px"
-    :data   = "boxes">
-    <b><u>Export data</u></b>
-</download-csv>
-</div>
+        <pre
+          style="padding-right:100px; height: 250px; overflow-y: scroll; scroll-snap-type: y proximity; "
+        >{{ JSON.stringify(tables, null, '\t') }}</pre>
+
+        <input v-model="imageInput" placeholder="Enter image name" />
+        <button type="submit" v-on:click="load()">Load</button>
+        <br />
+        <br />
+        <b v-on:click="saveTable()" style="color:blue">
+          <u>Save Table</u>
+        </b>
+        <download-csv style="color:blue; padding-top:5px" :data="tables">
+          <b>
+            <u>Export data</u>
+          </b>
+        </download-csv>
+      </div>
       <embed
-        style="padding-top:40px"
-        src="RedactedPayPal_sample3.pdf"
+        style="padding-top:25px"
+        :src=pdfName
         width="80%"
         height="400px"
         type="application/pdf"
@@ -33,7 +42,7 @@
     </div>
     <div
       id="image-wrapper"
-      :style="{backgroundImage: `url(0.png)`}"
+      :style="{backgroundImage: 'url('+ imageName +')'}"
       @mousedown="startDrawingBox"
       @mousemove="changeBox"
       @mouseup="stopDrawingBox"
@@ -66,7 +75,6 @@
 import Box from "./components/Box";
 import { pick } from "lodash";
 
-
 const getCoursorLeft = (e) => {
   return e.pageX - 10;
 };
@@ -88,6 +96,10 @@ export default {
         width: 0,
       },
       boxes: [],
+      tables: [],
+      imageInput: 'paypal_0',
+      imageName: 'https://doc-upload-test-987.s3.ap-south-1.amazonaws.com/paypal_0.png',
+      pdfName: 'https://doc-upload-test-987.s3.ap-south-1.amazonaws.com/paypal.pdf',
       activeBoxIndex: null,
     };
   },
@@ -135,6 +147,14 @@ export default {
       });
       this.activeBoxIndex = null;
     },
+    saveTable() {
+      this.tables.push(this.boxes);
+      this.boxes = [];
+    },
+    load(){
+        this.pdfName = 'https://doc-upload-test-987.s3.ap-south-1.amazonaws.com/' + this.imageInput.substring(0, this.imageInput.length - 2) + '.pdf';
+        this.imageName = 'https://doc-upload-test-987.s3.ap-south-1.amazonaws.com/' + this.imageInput + '.png';
+    }
   },
 };
 </script>
