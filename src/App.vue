@@ -72,11 +72,11 @@
   </div>
 </template>
 
-<script src="https://sdk.amazonaws.com/js/aws-sdk-2.756.0.min.js"></script>
-
 <script>
 import Box from "./components/Box";
 import { pick } from "lodash";
+
+var AWS = require("aws-sdk");
 
 const getCoursorLeft = (e) => {
   return e.pageX - 10;
@@ -194,7 +194,6 @@ export default {
       a.dispatchEvent(e);
     },
     upload() {
-      var albumBucketName = "doc-upload-test-987";
       var bucketRegion = "ap-south-1";
       var IdentityPoolId = "ap-south-1:5f660682-a77c-4d77-9456-7e4535bcb50c";
 
@@ -205,11 +204,9 @@ export default {
         }),
       });
 
-      var s3 = new AWS.S3({
-        apiVersion: "2006-03-01",
-        params: { Bucket: albumBucketName },
+      var file = new Blob([JSON.stringify(this.tables)], {
+        type: "application/json",
       });
-      var file = new Blob([JSON.stringify(this.tables)], { type: "application/json" });
       var fileName = this.imageInput + ".json";
       // Use S3 ManagedUpload class as it supports multipart uploads
       var upload = new AWS.S3.ManagedUpload({
